@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editable Financial & School Management System with WhatsApp</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --whatsapp: #25D366;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    h1 { margin: 0; font-size: 1.8rem; }
+    
+    .btn-new-student {
+      background-color: var(--success);
+      color: white;
+      font-weight: bold;
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-export {
+      background-color: #0d9488;
+      color: white;
+      font-weight: bold;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.9; }
+
+    /* Tab Navigation */
+    .tab-navigation {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 12px 18px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Grid & Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .stat-card .val {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    .stat-card.revenue .val { color: var(--primary); }
+    .stat-card.expenditure .val { color: var(--danger); }
+    .stat-card.saving .val { color: var(--success); }
+    .stat-card.warning .val { color: var(--warning); }
+    
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    .card-header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .card-header-actions h2 { margin: 0; font-size: 1.3rem; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    input, select, button {
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px;
+      text-align: left;
+    }
+    th { background: #f1f5f9; }
+    
+    .btn-whatsapp {
+      background: var(--whatsapp);
+      color: white;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      margin-right: 4px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-delete {
+      background: var(--danger);
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
+    .btn-edit {
+      background: var(--warning);
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      margin-right: 4px;
+    }
+    .btn-toggle {
+      background: #0284c7;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      margin-right: 4px;
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .badge-cash { background-color: #fef3c7; color: #92400e; }
+    .badge-online { background-color: #e0e7ff; color: #3730a3; }
+    .badge-bank { background-color: #dcfce7; color: #166534; }
+    .badge-pending { background-color: #fee2e2; color: #991b1b; }
+    .badge-returned { background-color: #d1fae5; color: #065f46; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Top Bar -->
+  <div class="header-bar">
+    <h1>Editable Integrated Finance System</h1>
+    <button class="btn-new-student" onclick="switchToStudentForm()">+ New Student Record</button>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-navigation">
+    <button class="tab-btn active" onclick="openTab('school-tab', this)">School Fees & Expenses</button>
+    <button class="tab-btn" onclick="openTab('budget-tab', this)">Monthly Budget</button>
+    <button class="tab-btn" onclick="openTab('bank-tab', this)">🏦 Bank Account</button>
+    <button class="tab-btn" onclick="openTab('loan-tab', this)">🤝 Loan / Udhar (قرضہ)</button>
+  </div>
+
+  <!-- TAB 1: SCHOOL FEES & EXPENSES -->
+  <div id="school-tab" class="tab-content active">
+    <div class="grid">
+      <div class="stat-card revenue">
+        <div>Total Fees Collected</div>
+        <div class="val" id="stat-revenue">Rs 0.00</div>
+      </div>
+      <div class="stat-card expenditure">
+        <div>Total Expenses</div>
+        <div class="val" id="stat-expenditure">Rs 0.00</div>
+      </div>
+      <div class="stat-card saving">
+        <div>Net Savings</div>
+        <div class="val" id="stat-saving">Rs 0.00</div>
+      </div>
+    </div>
+
+    <div class="card" id="student-card">
+      <h2 id="student-form-title">Add Student Fee Record</h2>
+      <form id="student-form" class="form-grid">
+        <input type="hidden" id="studentEditId">
+        <input type="text" id="sName" placeholder="Student Name *" required>
+        <input type="text" id="fName" placeholder="Father Name *" required>
+        <input type="text" id="sClass" placeholder="Class *" required>
+        <input type="text" id="feeMonth" placeholder="Fee Month *" required>
+        <input type="number" id="feeAmount" placeholder="Amount (Rs) *" min="0" step="any" required>
+        <select id="sPayMode" required>
+          <option value="" disabled selected>Payment Mode *</option>
+          <option value="Cash">Cash</option>
+          <option value="Online">Online Transfer</option>
+          <option value="Bank">Bank Deposit</option>
+        </select>
+        <input type="tel" id="sContact" placeholder="Contact No. e.g. 03001234567">
+        <input type="date" id="admDate" title="Admission Date (Optional)">
+        <button type="submit" id="studentSubmitBtn">Add Record</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 id="expense-form-title">Add Expense Record</h2>
+      <form id="expense-form" class="form-grid" style="grid-template-columns: 2fr 1fr 1fr auto;">
+        <input type="hidden" id="expenseEditId">
+        <input type="text" id="expDesc" placeholder="Expense Description" required>
+        <input type="number" id="expAmount" placeholder="Amount (Rs)" min="0" step="any" required>
+        <select id="expPayMode" required>
+          <option value="" disabled selected>Payment Mode</option>
+          <option value="Cash">Cash</option>
+          <option value="Online">Online</option>
+          <option value="Bank">Bank Check/Transfer</option>
+        </select>
+        <button type="submit" id="expenseSubmitBtn" style="background: var(--danger);">Add Expense</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-header-actions">
+        <h2>Student Fee Records</h2>
+        <button class="btn-export" onclick="exportStudentsCSV()">📥 Export CSV</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Father Name</th>
+            <th>Class</th>
+            <th>Month</th>
+            <th>Fee (Rs)</th>
+            <th>Mode</th>
+            <th>Contact No.</th>
+            <th>Admission Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="student-table"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header-actions">
+        <h2>School Expense Log</h2>
+        <button class="btn-export" onclick="exportExpensesCSV()">📥 Export CSV</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount (Rs)</th>
+            <th>Mode</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="expense-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: MONTHLY BUDGET -->
+  <div id="budget-tab" class="tab-content">
+    <div class="grid">
+      <div class="stat-card revenue">
+        <div>Total Income (کل آمدن)</div>
+        <div class="val" id="budget-total-income">Rs 0.00</div>
+      </div>
+      <div class="stat-card expenditure">
+        <div>Total Expenditure (کل خرچ)</div>
+        <div class="val" id="budget-total-expenditure">Rs 0.00</div>
+      </div>
+      <div class="stat-card saving">
+        <div>Overall Net Savings</div>
+        <div class="val" id="budget-total-savings">Rs 0.00</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="budget-form-title">Add Monthly Budget Entry</h2>
+      <form id="budget-form" class="form-grid">
+        <input type="hidden" id="budgetEditId">
+        <input type="date" id="bDate" required>
+        <input type="number" id="bIncome" placeholder="Income (Rs)" min="0" step="any" value="0" required>
+        <input type="text" id="bIncomeDetail" placeholder="Income Detail">
+        <input type="number" id="bExpenditure" placeholder="Expenditure (Rs)" min="0" step="any" value="0" required>
+        <input type="text" id="bExpDetail" placeholder="Expenditure Detail">
+        <select id="bPayMode" required>
+          <option value="" disabled selected>Mode</option>
+          <option value="Cash">Cash (نقد)</option>
+          <option value="Online">Online Transfer</option>
+          <option value="Bank">Bank Deposit / Cheque</option>
+        </select>
+        <button type="submit" id="budgetSubmitBtn">Save Entry</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-header-actions">
+        <h2>Monthly Budget History</h2>
+        <button class="btn-export" onclick="exportBudgetCSV()">📥 Export CSV</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Income (Rs)</th>
+            <th>Income Detail</th>
+            <th>Expenditure (Rs)</th>
+            <th>Expenditure Detail</th>
+            <th>Mode</th>
+            <th>Savings (Rs)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="budget-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: BANK MANAGEMENT -->
+  <div id="bank-tab" class="tab-content">
+    <div class="grid">
+      <div class="stat-card revenue">
+        <div>Total Bank Deposits</div>
+        <div class="val" id="bank-total-in">Rs 0.00</div>
+      </div>
+      <div class="stat-card expenditure">
+        <div>Total Bank Withdrawals</div>
+        <div class="val" id="bank-total-out">Rs 0.00</div>
+      </div>
+      <div class="stat-card saving">
+        <div>Current Net Bank Balance</div>
+        <div class="val" id="bank-balance">Rs 0.00</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="bank-form-title">Add Direct Bank Transaction</h2>
+      <form id="bank-form" class="form-grid">
+        <input type="hidden" id="bankEditId">
+        <input type="date" id="bankDate" required>
+        <select id="bankType" required>
+          <option value="Deposit">Deposit / Income (بینک میں آمدن/جمع)</option>
+          <option value="Withdrawal">Withdrawal / Expense (بینک سے خرچ/نکلوایا)</option>
+        </select>
+        <input type="number" id="bankAmount" placeholder="Amount (Rs)" min="0" step="any" required>
+        <input type="text" id="bankDetail" placeholder="Transaction Detail (e.g., Cheque / Online Fee)" required>
+        <button type="submit" id="bankSubmitBtn" style="background: #0284c7;">Record Bank Transaction</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Bank Ledger Statement</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Detail</th>
+            <th>Amount (Rs)</th>
+            <th>Source</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bank-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: LOAN / UDHAR -->
+  <div id="loan-tab" class="tab-content">
+    <div class="grid">
+      <div class="stat-card warning">
+        <div>Total Loans Given (دیے گئے پیسے)</div>
+        <div class="val" id="loan-given">Rs 0.00</div>
+      </div>
+      <div class="stat-card expenditure">
+        <div>Total Loans Taken (لیے گئے پیسے)</div>
+        <div class="val" id="loan-taken">Rs 0.00</div>
+      </div>
+      <div class="stat-card saving">
+        <div>Net Pending Recovery</div>
+        <div class="val" id="loan-pending">Rs 0.00</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="loan-form-title">Record Loan / Udhar Transaction</h2>
+      <form id="loan-form" class="form-grid">
+        <input type="hidden" id="loanEditId">
+        <input type="date" id="lDate" required>
+        <input type="text" id="lPerson" placeholder="Person / Party Name" required>
+        <select id="lType" required>
+          <option value="Given">Loan Given (پیسے دیے)</option>
+          <option value="Taken">Loan Taken (پیسے لیے)</option>
+        </select>
+        <input type="number" id="lAmount" placeholder="Amount (Rs)" min="0" step="any" required>
+        <input type="text" id="lNote" placeholder="Note / Reason" required>
+        <button type="submit" id="loanSubmitBtn" style="background: var(--warning);">Add Loan Record</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Loan & Udhar Log</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Person</th>
+            <th>Type</th>
+            <th>Amount (Rs)</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="loan-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let students = JSON.parse(localStorage.getItem('students_data')) || [];
+  let expenses = JSON.parse(localStorage.getItem('expenses_data')) || [];
+  let budgetRecords = JSON.parse(localStorage.getItem('budget_data')) || [];
+  let bankRecords = JSON.parse(localStorage.getItem('bank_data')) || [];
+  let loanRecords = JSON.parse(localStorage.getItem('loan_data')) || [];
+
+  function saveData() {
+    localStorage.setItem('students_data', JSON.stringify(students));
+    localStorage.setItem('expenses_data', JSON.stringify(expenses));
+    localStorage.setItem('budget_data', JSON.stringify(budgetRecords));
+    localStorage.setItem('bank_data', JSON.stringify(bankRecords));
+    localStorage.setItem('loan_data', JSON.stringify(loanRecords));
+  }
+
+  function openTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btnElement.classList.add('active');
+  }
+
+  function switchToStudentForm() {
+    openTab('school-tab', document.querySelectorAll('.tab-btn')[0]);
+    resetStudentForm();
+    document.getElementById('sName').focus();
+  }
+
+  function renderBadge(mode) {
+    if (mode === 'Online') return `<span class="badge badge-online">Online</span>`;
+    if (mode === 'Bank') return `<span class="badge badge-bank">Bank</span>`;
+    return `<span class="badge badge-cash">Cash</span>`;
+  }
+
+  function sendWhatsAppReceipt(id) {
+    const student = students.find(s => s.id === id);
+    if (!student) return;
+
+    let phone = student.sContact ? student.sContact.trim().replace(/[^0-9]/g, '') : '';
+    
+    // Format Pakistani numbers properly for WhatsApp (e.g. 03001234567 -> 923001234567)
+    if (phone.startsWith('0')) {
+      phone = '92' + phone.substring(1);
+    }
+
+    const message = `🏛️ *Al-Naseer Learning Hub*%0A` +
+      `📋 *فیس کی باضابطہ رسید / Fee Receipt*%0A` +
+      `━━━━━━━━━━━━━━━━━━%0A` +
+      `👤 *طالب علم:* ${student.sName}%0A` +
+      `👨‍👦 *والد کا نام:* ${student.fName}%0A` +
+      `📚 *کلاس:* ${student.sClass}%0A` +
+      `📅 *مہینہ:* ${student.feeMonth}%0A` +
+      `💳 *طریقہ ادائیگی:* ${student.payMode}%0A` +
+      `💰 *وصول شدہ رقم:* Rs ${student.feeAmount.toFixed(2)}%0A` +
+      `━━━━━━━━━━━━━━━━━━%0A` +
+      `✅ *حالت:* فیس موصول ہو چکی ہے، شکریہ!`;
+
+    let url = '';
+    if (phone) {
+      url = `https://wa.me/${phone}?text=${message}`;
+    } else {
+      url = `https://wa.me/?text=${message}`;
+    }
+    
+    window.open(url, '_blank');
+  }
+
+  function resetStudentForm() {
+    document.getElementById('student-form').reset();
+    document.getElementById('studentEditId').value = '';
+    document.getElementById('student-form-title').textContent = 'Add Student Fee Record';
+    document.getElementById('studentSubmitBtn').textContent = 'Add Record';
+  }
+
+  function resetExpenseForm() {
+    document.getElementById('expense-form').reset();
+    document.getElementById('expenseEditId').value = '';
+    document.getElementById('expense-form-title').textContent = 'Add Expense Record';
+    document.getElementById('expenseSubmitBtn').textContent = 'Add Expense';
+  }
+
+  function resetBudgetForm() {
+    document.getElementById('budget-form').reset();
+    document.getElementById('budgetEditId').value = '';
+    document.getElementById('budget-form-title').textContent = 'Add Monthly Budget Entry';
+    document.getElementById('budgetSubmitBtn').textContent = 'Save Entry';
+  }
+
+  function resetBankForm() {
+    document.getElementById('bank-form').reset();
+    document.getElementById('bankEditId').value = '';
+    document.getElementById('bank-form-title').textContent = 'Add Direct Bank Transaction';
+    document.getElementById('bankSubmitBtn').textContent = 'Record Bank Transaction';
+  }
+
+  function resetLoanForm() {
+    document.getElementById('loan-form').reset();
+    document.getElementById('loanEditId').value = '';
+    document.getElementById('loan-form-title').textContent = 'Record Loan / Udhar Transaction';
+    document.getElementById('loanSubmitBtn').textContent = 'Add Loan Record';
+  }
+
+  // --- SUBMISSIONS ---
+  document.getElementById('student-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('studentEditId').value;
+    const payMode = document.getElementById('sPayMode').value;
+    const amount = parseFloat(document.getElementById('feeAmount').value);
+    const name = document.getElementById('sName').value;
+    const month = document.getElementById('feeMonth').value;
+    const contact = document.getElementById('sContact').value || 'N/A';
+    const admDate = document.getElementById('admDate').value || 'N/A';
+
+    if (editId) {
+      const id = parseInt(editId);
+      students = students.map(s => s.id === id ? {
+        id,
+        sName: name,
+        fName: document.getElementById('fName').value,
+        sClass: document.getElementById('sClass').value,
+        feeMonth: month,
+        feeAmount: amount,
+        payMode: payMode,
+        sContact: contact,
+        admDate: admDate
+      } : s);
+
+      bankRecords = bankRecords.filter(b => b.id !== id);
+      if (payMode === 'Bank' || payMode === 'Online') {
+        bankRecords.push({
+          id: id,
+          date: new Date().toISOString().split('T')[0],
+          type: 'Deposit',
+          amount: amount,
+          detail: `Fee Collection: ${name} (${month})`,
+          source: 'Auto-Synced (Fee)'
+        });
+      }
+    } else {
+      const id = Date.now();
+      students.push({
+        id: id,
+        sName: name,
+        fName: document.getElementById('fName').value,
+        sClass: document.getElementById('sClass').value,
+        feeMonth: month,
+        feeAmount: amount,
+        payMode: payMode,
+        sContact: contact,
+        admDate: admDate
+      });
+
+      if (payMode === 'Bank' || payMode === 'Online') {
+        bankRecords.push({
+          id: id,
+          date: new Date().toISOString().split('T')[0],
+          type: 'Deposit',
+          amount: amount,
+          detail: `Fee Collection: ${name} (${month})`,
+          source: 'Auto-Synced (Fee)'
+        });
+      }
+    }
+
+    saveData();
+    resetStudentForm();
+    render();
+  });
+
+  document.getElementById('expense-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('expenseEditId').value;
+    const payMode = document.getElementById('expPayMode').value;
+    const amount = parseFloat(document.getElementById('expAmount').value);
+    const desc = document.getElementById('expDesc').value;
+
+    if (editId) {
+      const id = parseInt(editId);
+      expenses = expenses.map(ex => ex.id === id ? { id, desc, amount, payMode } : ex);
+      bankRecords = bankRecords.filter(b => b.id !== id);
+      if (payMode === 'Bank' || payMode === 'Online') {
+        bankRecords.push({
+          id: id,
+          date: new Date().toISOString().split('T')[0],
+          type: 'Withdrawal',
+          amount: amount,
+          detail: `Expense: ${desc}`,
+          source: 'Auto-Synced (Expense)'
+        });
+      }
+    } else {
+      const id = Date.now();
+      expenses.push({ id, desc, amount, payMode });
+      if (payMode === 'Bank' || payMode === 'Online') {
+        bankRecords.push({
+          id: id,
+          date: new Date().toISOString().split('T')[0],
+          type: 'Withdrawal',
+          amount: amount,
+          detail: `Expense: ${desc}`,
+          source: 'Auto-Synced (Expense)'
+        });
+      }
+    }
+
+    saveData();
+    resetExpenseForm();
+    render();
+  });
+
+  document.getElementById('budget-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('budgetEditId').value;
+    const income = parseFloat(document.getElementById('bIncome').value) || 0;
+    const expenditure = parseFloat(document.getElementById('bExpenditure').value) || 0;
+    const payMode = document.getElementById('bPayMode').value;
+    const incDetail = document.getElementById('bIncomeDetail').value || 'Income';
+    const expDetail = document.getElementById('bExpDetail').value || 'Expense';
+    const bDate = document.getElementById('bDate').value;
+
+    if (editId) {
+      const id = parseInt(editId);
+      budgetRecords = budgetRecords.map(b => b.id === id ? {
+        id, date: bDate, income, incomeDetail: incDetail, expenditure, expDetail, payMode, saving: income - expenditure
+      } : b);
+
+      bankRecords = bankRecords.filter(b => b.id !== id && b.id !== (id + 1) && b.id !== (id + 2));
+      if (payMode === 'Bank') {
+        if (income > 0) bankRecords.push({ id: id + 1, date: bDate, type: 'Deposit', amount: income, detail: `Budget Income: ${incDetail}`, source: 'Auto-Synced (Budget)' });
+        if (expenditure > 0) bankRecords.push({ id: id + 2, date: bDate, type: 'Withdrawal', amount: expenditure, detail: `Budget Exp: ${expDetail}`, source: 'Auto-Synced (Budget)' });
+      }
+    } else {
+      const id = Date.now();
+      budgetRecords.push({ id, date: bDate, income, incomeDetail: incDetail, expenditure, expDetail, payMode, saving: income - expenditure });
+      if (payMode === 'Bank') {
+        if (income > 0) bankRecords.push({ id: id + 1, date: bDate, type: 'Deposit', amount: income, detail: `Budget Income: ${incDetail}`, source: 'Auto-Synced (Budget)' });
+        if (expenditure > 0) bankRecords.push({ id: id + 2, date: bDate, type: 'Withdrawal', amount: expenditure, detail: `Budget Exp: ${expDetail}`, source: 'Auto-Synced (Budget)' });
+      }
+    }
+
+    saveData();
+    resetBudgetForm();
+    render();
+  });
+
+  document.getElementById('bank-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('bankEditId').value;
+    const date = document.getElementById('bankDate').value;
+    const type = document.getElementById('bankType').value;
+    const amount = parseFloat(document.getElementById('bankAmount').value);
+    const detail = document.getElementById('bankDetail').value;
+
+    if (editId) {
+      const id = parseInt(editId);
+      bankRecords = bankRecords.map(b => b.id === id ? { id, date, type, amount, detail, source: b.source || 'Direct Bank' } : b);
+    } else {
+      bankRecords.push({ id: Date.now(), date, type, amount, detail, source: 'Direct Bank' });
+    }
+
+    saveData();
+    resetBankForm();
+    render();
+  });
+
+  document.getElementById('loan-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('loanEditId').value;
+    const date = document.getElementById('lDate').value;
+    const person = document.getElementById('lPerson').value;
+    const type = document.getElementById('lType').value;
+    const amount = parseFloat(document.getElementById('lAmount').value);
+    const note = document.getElementById('lNote').value;
+
+    if (editId) {
+      const id = parseInt(editId);
+      loanRecords = loanRecords.map(l => l.id === id ? { ...l, date, person, type, amount, note } : l);
+    } else {
+      loanRecords.push({ id: Date.now(), date, person, type, amount, note, status: 'Pending' });
+    }
+
+    saveData();
+    resetLoanForm();
+    render();
+  });
+
+  // --- EDIT FUNCTIONS ---
+  function editStudent(id) {
+    const s = students.find(item => item.id === id);
+    if (!s) return;
+    document.getElementById('studentEditId').value = s.id;
+    document.getElementById('sName').value = s.sName;
+    document.getElementById('fName').value = s.fName;
+    document.getElementById('sClass').value = s.sClass;
+    document.getElementById('feeMonth').value = s.feeMonth;
+    document.getElementById('feeAmount').value = s.feeAmount;
+    document.getElementById('sPayMode').value = s.payMode;
+    document.getElementById('sContact').value = s.sContact !== 'N/A' ? s.sContact : '';
+    document.getElementById('admDate').value = s.admDate !== 'N/A' ? s.admDate : '';
+
+    document.getElementById('student-form-title').textContent = 'Update Student Record';
+    document.getElementById('studentSubmitBtn').textContent = 'Update Record';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function editExpense(id) {
+    const e = expenses.find(item => item.id === id);
+    if (!e) return;
+    document.getElementById('expenseEditId').value = e.id;
+    document.getElementById('expDesc').value = e.desc;
+    document.getElementById('expAmount').value = e.amount;
+    document.getElementById('expPayMode').value = e.payMode;
+
+    document.getElementById('expense-form-title').textContent = 'Update Expense Record';
+    document.getElementById('expenseSubmitBtn').textContent = 'Update Expense';
+  }
+
+  function editBudget(id) {
+    const b = budgetRecords.find(item => item.id === id);
+    if (!b) return;
+    document.getElementById('budgetEditId').value = b.id;
+    document.getElementById('bDate').value = b.date;
+    document.getElementById('bIncome').value = b.income;
+    document.getElementById('bIncomeDetail').value = b.incomeDetail;
+    document.getElementById('bExpenditure').value = b.expenditure;
+    document.getElementById('bExpDetail').value = b.expDetail;
+    document.getElementById('bPayMode').value = b.payMode;
+
+    document.getElementById('budget-form-title').textContent = 'Update Monthly Budget Entry';
+    document.getElementById('budgetSubmitBtn').textContent = 'Update Entry';
+  }
+
+  function editBank(id) {
+    const b = bankRecords.find(item => item.id === id);
+    if (!b) return;
+    document.getElementById('bankEditId').value = b.id;
+    document.getElementById('bankDate').value = b.date;
+    document.getElementById('bankType').value = b.type;
+    document.getElementById('bankAmount').value = b.amount;
+    document.getElementById('bankDetail').value = b.detail;
+
+    document.getElementById('bank-form-title').textContent = 'Update Direct Bank Transaction';
+    document.getElementById('bankSubmitBtn').textContent = 'Update Bank Transaction';
+  }
+
+  function editLoan(id) {
+    const l = loanRecords.find(item => item.id === id);
+    if (!l) return;
+    document.getElementById('loanEditId').value = l.id;
+    document.getElementById('lDate').value = l.date;
+    document.getElementById('lPerson').value = l.person;
+    document.getElementById('lType').value = l.type;
+    document.getElementById('lAmount').value = l.amount;
+    document.getElementById('lNote').value = l.note;
+
+    document.getElementById('loan-form-title').textContent = 'Update Loan Record';
+    document.getElementById('loanSubmitBtn').textContent = 'Update Loan Record';
+  }
+
+  // --- ACTIONS ---
+  function deleteStudent(id) { 
+    students = students.filter(s => s.id !== id); 
+    bankRecords = bankRecords.filter(b => b.id !== id);
+    saveData(); 
+    render(); 
+  }
+
+  function deleteExpense(id) { 
+    expenses = expenses.filter(e => e.id !== id); 
+    bankRecords = bankRecords.filter(b => b.id !== id);
+    saveData(); 
+    render(); 
+  }
+
+  function deleteBudget(id) { 
+    budgetRecords = budgetRecords.filter(b => b.id !== id); 
+    bankRecords = bankRecords.filter(b => b.id !== id && b.id !== (id + 1) && b.id !== (id + 2));
+    saveData(); 
+    render(); 
+  }
+
+  function deleteBank(id) { 
+    bankRecords = bankRecords.filter(b => b.id !== id); 
+    saveData(); 
+    render(); 
+  }
+
+  function deleteLoan(id) { 
+    loanRecords = loanRecords.filter(l => l.id !== id); 
+    saveData(); 
+    render(); 
+  }
+  
+  function toggleLoanStatus(id) {
+    loanRecords = loanRecords.map(l => {
+      if(l.id === id) l.status = l.status === 'Pending' ? 'Returned / Paid' : 'Pending';
+      return l;
+    });
+    saveData();
+    render();
+  }
+
+  // --- CSV EXPORTS ---
+  function downloadCSV(csv, filename) {
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  }
+
+  function exportStudentsCSV() {
+    if(!students.length) return alert("No data!");
+    let csv = "Name,Father Name,Class,Month,Fee,Mode,Contact No.,Admission Date\n";
+    students.forEach(s => csv += `"${s.sName}","${s.fName}","${s.sClass}","${s.feeMonth}",${s.feeAmount},"${s.payMode}","${s.sContact || 'N/A'}","${s.admDate || 'N/A'}"\n`);
+    downloadCSV(csv, "Students_Fees.csv");
+  }
+
+  function exportExpensesCSV() {
+    if(!expenses.length) return alert("No data!");
+    let csv = "Description,Amount,Mode\n";
+    expenses.forEach(e => csv += `"${e.desc}",${e.amount},"${e.payMode}"\n`);
+    downloadCSV(csv, "Expenses.csv");
+  }
+
+  function exportBudgetCSV() {
+    if(!budgetRecords.length) return alert("No data!");
+    let csv = "Date,Income,Income Detail,Expenditure,Expenditure Detail,Mode,Saving\n";
+    budgetRecords.forEach(b => csv += `"${b.date}",${b.income},"${b.incomeDetail}",${b.expenditure},"${b.expDetail}","${b.payMode}",${b.saving}\n`);
+    downloadCSV(csv, "Monthly_Budget.csv");
+  }
+
+  // --- RENDER FUNCTION ---
+  function render() {
+    // 1. Students & Expenses Tables
+    document.getElementById('student-table').innerHTML = students.map(s => `
+      <tr>
+        <td>${s.sName}</td>
+        <td>${s.fName}</td>
+        <td>${s.sClass}</td>
+        <td>${s.feeMonth}</td>
+        <td>Rs ${s.feeAmount.toFixed(2)}</td>
+        <td>${renderBadge(s.payMode)}</td>
+        <td>${s.sContact || 'N/A'}</td>
+        <td>${s.admDate || 'N/A'}</td>
+        <td>
+          <button class="btn-whatsapp" onclick="sendWhatsAppReceipt(${s.id})">💬 WhatsApp</button>
+          <button class="btn-edit" onclick="editStudent(${s.id})">Edit</button>
+          <button class="btn-delete" onclick="deleteStudent(${s.id})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+
+    document.getElementById('expense-table').innerHTML = expenses.map(e => `
+      <tr>
+        <td>${e.desc}</td><td>Rs ${e.amount.toFixed(2)}</td><td>${renderBadge(e.payMode)}</td>
+        <td>
+          <button class="btn-edit" onclick="editExpense(${e.id})">Edit</button>
+          <button class="btn-delete" onclick="deleteExpense(${e.id})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+
+    // 2. Budget Table
+    document.getElementById('budget-table').innerHTML = budgetRecords.map(b => `
+      <tr>
+        <td>${b.date}</td><td>Rs ${b.income.toFixed(2)}</td><td>${b.incomeDetail}</td>
+        <td>Rs ${b.expenditure.toFixed(2)}</td><td>${b.expDetail}</td><td>${renderBadge(b.payMode)}</td>
+        <td style="color:${b.saving >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:bold;">Rs ${b.saving.toFixed(2)}</td>
+        <td>
+          <button class="btn-edit" onclick="editBudget(${b.id})">Edit</button>
+          <button class="btn-delete" onclick="deleteBudget(${b.id})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+
+    // 3. Bank Table
+    document.getElementById('bank-table').innerHTML = bankRecords.map(b => `
+      <tr>
+        <td>${b.date}</td>
+        <td><span class="badge ${b.type === 'Deposit' ? 'badge-bank' : 'badge-pending'}">${b.type}</span></td>
+        <td>${b.detail}</td>
+        <td>Rs ${b.amount.toFixed(2)}</td>
+        <td><em>${b.source || 'Direct'}</em></td>
+        <td>
+          ${b.source === 'Direct Bank' ? `
+            <button class="btn-edit" onclick="editBank(${b.id})">Edit</button>
+            <button class="btn-delete" onclick="deleteBank(${b.id})">Delete</button>
+          ` : '<small style="color:#64748b;">Auto Sync</small>'}
+        </td>
+      </tr>
+    `).join('');
+
+    // 4. Loan Table
+    document.getElementById('loan-table').innerHTML = loanRecords.map(l => `
+      <tr>
+        <td>${l.date}</td>
+        <td>${l.person}</td>
+        <td><span class="badge ${l.type === 'Given' ? 'badge-pending' : 'badge-online'}">${l.type}</span></td>
+        <td>Rs ${l.amount.toFixed(2)}</td>
+        <td>${l.note}</td>
+        <td><span class="badge ${l.status === 'Pending' ? 'badge-pending' : 'badge-returned'}">${l.status}</span></td>
+        <td>
+          <button class="btn-toggle" onclick="toggleLoanStatus(${l.id})">Status</button>
+          <button class="btn-edit" onclick="editLoan(${l.id})">Edit</button>
+          <button class="btn-delete" onclick="deleteLoan(${l.id})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+
+    // --- RECALCULATE STATS ---
+    const totalRev = students.reduce((sum, s) => sum + s.feeAmount, 0);
+    const totalExp = expenses.reduce((sum, e) => sum + e.amount, 0);
+    document.getElementById('stat-revenue').textContent = `Rs ${totalRev.toFixed(2)}`;
+    document.getElementById('stat-expenditure').textContent = `Rs ${totalExp.toFixed(2)}`;
+    document.getElementById('stat-saving').textContent = `Rs ${(totalRev - totalExp).toFixed(2)}`;
+
+    const totalBudgetIncome = budgetRecords.reduce((sum, b) => sum + b.income, 0);
+    const totalBudgetExp = budgetRecords.reduce((sum, b) => sum + b.expenditure, 0);
+    document.getElementById('budget-total-income').textContent = `Rs ${totalBudgetIncome.toFixed(2)}`;
+    document.getElementById('budget-total-expenditure').textContent = `Rs ${totalBudgetExp.toFixed(2)}`;
+    document.getElementById('budget-total-savings').textContent = `Rs ${(totalBudgetIncome - totalBudgetExp).toFixed(2)}`;
+
+    const bankIn = bankRecords.filter(b => b.type === 'Deposit').reduce((sum, b) => sum + b.amount, 0);
+    const bankOut = bankRecords.filter(b => b.type === 'Withdrawal').reduce((sum, b) => sum + b.amount, 0);
+    document.getElementById('bank-total-in').textContent = `Rs ${bankIn.toFixed(2)}`;
+    document.getElementById('bank-total-out').textContent = `Rs ${bankOut.toFixed(2)}`;
+    document.getElementById('bank-balance').textContent = `Rs ${(bankIn - bankOut).toFixed(2)}`;
+
+    const loanGiven = loanRecords.filter(l => l.type === 'Given' && l.status === 'Pending').reduce((sum, l) => sum + l.amount, 0);
+    const loanTaken = loanRecords.filter(l => l.type === 'Taken' && l.status === 'Pending').reduce((sum, l) => sum + l.amount, 0);
+    document.getElementById('loan-given').textContent = `Rs ${loanGiven.toFixed(2)}`;
+    document.getElementById('loan-taken').textContent = `Rs ${loanTaken.toFixed(2)}`;
+    document.getElementById('loan-pending').textContent = `Rs ${(loanGiven - loanTaken).toFixed(2)}`;
+  }
+
+  // Initial Execution
+  render();
+</script>
+</body>
+</html>
